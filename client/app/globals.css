@@ -1,0 +1,22 @@
+/* styles/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-black text-white; /* Sets the background to black and text to white */
+}
+
+.loader {
+  border: 8px solid #2d2a2a; /* Light grey */
+  border-top: 8px solid #7d7f81; /* Blue */
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s alternate infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
