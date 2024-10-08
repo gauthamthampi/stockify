@@ -1,31 +1,62 @@
+ 'use client'
+import { useState } from 'react';
+import axios from 'axios';
 import Link from 'next/link';
+import { localhost } from '@/url';
+import { useRouter } from 'next/navigation';
 
 const LoginComponent = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter()
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(''); 
+
+    if (!username || !password) {
+      setError('Both username and password are required');
+      return;
+    }
+
+    try {
+      setLoading(true); 
+      const response = await axios.post(localhost+'/api/login', { username, password });
+      console.log('Login successful:', response.data);
+      localStorage.setItem("tokenStockify",response.data.token)
+      router.push('/dashboard')
+    } catch (err) {
+      console.error('Login error:', err);
+      setError(err.response?.data?.message || 'Login failed, please try again.');
+      setLoading(false); 
+    } 
+  };
+
   return (
     <div className="bg-black text-white flex min-h-screen flex-col items-center pt-16 sm:justify-center sm:pt-0">
-      {/* <Link href="#"> */}
-        <a>
-          <div className="text-foreground font-semibold text-2xl tracking-tighter mx-auto flex items-center gap-2">
-            <div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672Zm-7.518-.267A8.25 8.25 0 1 1 20.25 10.5M8.288 14.212A5.25 5.25 0 1 1 17.25 10.5"
-                />
-              </svg>
-            </div>
-           Stockify
+      <a>
+        <div className="text-foreground font-semibold text-2xl tracking-tighter mx-auto flex items-center gap-2">
+          <div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.5"
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.042 21.672L13.684 16.6m0 0l-2.51 2.225.569-9.47 5.227 7.917-3.286-.672Zm-7.518-.267A8.25 8.25 0 1 1 20.25 10.5M8.288 14.212A5.25 5.25 0 1 1 17.25 10.5"
+              />
+            </svg>
           </div>
-        </a>
-      {/* </Link> */}
+          Stockify
+        </div>
+      </a>
 
       <div className="relative mt-12 w-full max-w-lg sm:mt-10">
         <div className="relative -mb-px h-px w-full bg-gradient-to-r from-transparent via-sky-300 to-transparent"></div>
@@ -38,13 +69,19 @@ const LoginComponent = () => {
           </div>
 
           <div className="p-6 pt-0">
-            <form>
+            <form onSubmit={handleSubmit}>
+              {error && (
+                <div className="mb-4 text-red-500 text-sm">
+                  {error}
+                </div>
+              )}
+
               <div>
                 <div>
                   <div className="group relative rounded-lg border focus-within:border-sky-200 px-3 pb-1.5 pt-2.5 duration-200 focus-within:ring focus-within:ring-sky-300/30">
                     <div className="flex justify-between">
                       <label className="text-xs font-medium text-muted-foreground group-focus-within:text-white text-gray-400">
-                        Username
+                        Email
                       </label>
                       <div className="absolute right-3 translate-y-2 text-green-200">
                         <svg
@@ -62,8 +99,10 @@ const LoginComponent = () => {
                       </div>
                     </div>
                     <input
-                      type="text"
+                      type="email"
                       name="username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
                       placeholder="Username"
                       autoComplete="off"
                       className="block w-full border-0 bg-transparent p-0 text-sm placeholder:text-muted-foreground/90 focus:outline-none focus:ring-0 sm:leading-7 text-foreground"
@@ -84,6 +123,9 @@ const LoginComponent = () => {
                       <input
                         type="password"
                         name="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Password"
                         className="block w-full border-0 bg-transparent p-0 text-sm placeholder:text-muted-foreground/90 focus:outline-none focus:ring-0 focus:ring-teal-500 sm:leading-7 text-foreground"
                       />
                     </div>
@@ -91,16 +133,16 @@ const LoginComponent = () => {
                 </div>
               </div>
 
-              
               <div className="mt-4 flex items-center justify-end gap-x-2">
-                  <a href='/signup' className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:ring hover:ring-white h-10 px-4 py-2 duration-200">
+                  <a href="/signup" className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:ring hover:ring-white h-10 px-4 py-2 duration-200">
                     Register
                   </a>
                 <button
                   className="font-semibold hover:bg-black hover:text-white hover:ring hover:ring-white transition duration-300 inline-flex items-center justify-center rounded-md text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-white text-black h-10 px-4 py-2"
                   type="submit"
+                  disabled={loading}
                 >
-                  Log in
+                  {loading ? 'Logging in...' : 'Log in'}
                 </button>
               </div>
             </form>

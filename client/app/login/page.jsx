@@ -1,17 +1,26 @@
 'use client'
 import React, { useEffect, useState } from 'react';
 import LoginComponent from '../../components/login';
+import { useRouter } from 'next/navigation';
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(true);
+  const router = useRouter()
 
+  
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false); 
-    }, 2000); 
+    const token = localStorage.getItem('tokenStockify');
 
-    return () => clearTimeout(timer); 
-  }, []);
+    if (token) {
+      router.push('/dashboard');
+    } else {
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [router]);
 
   if (loading) {
     return (
