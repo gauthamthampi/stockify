@@ -13,7 +13,7 @@ const Dashboard = () => {
   const [customerCount, setCustomerCount] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
   const [totalStockQuantity, setTotalStockQuantity] = useState(0);
-  const [monthlySales, setMonthlySales] = useState([]); // State for monthly sales data
+  // const [monthlySales, setMonthlySales] = useState([]); // State for monthly sales data
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
 
@@ -28,14 +28,14 @@ const Dashboard = () => {
           },
         });
         
-        const { totalItemsSold, totalCustomers, totalProfit, totalInventoryItems, monthlySales } = response.data;
+        const { totalItemsSold, totalCustomers, totalProfit, totalInventoryItems } = response.data;
         console.log(response.data);
         
         setInventoryCount(totalInventoryItems);
         setCustomerCount(totalCustomers);
         setTotalProfit(totalProfit);
         setTotalStockQuantity(totalItemsSold);
-        setMonthlySales(monthlySales); // Set monthly sales data
+        // setMonthlySales(monthlySales); // Set monthly sales data
         setLoading(false);
       } catch (err) {
         console.error(err);
