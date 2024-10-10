@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Line } from 'react-chartjs-2';
+// import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { localhost } from '@/url';
 
@@ -38,6 +38,7 @@ const Dashboard = () => {
         setMonthlySales(monthlySales); // Set monthly sales data
         setLoading(false);
       } catch (err) {
+        console.error(err);
         setError('Error fetching data');
         setLoading(false);
       }
@@ -50,33 +51,33 @@ const Dashboard = () => {
   if (error) return <div className="text-red-500">{error}</div>;
 
   // Chart data and options for the line graph
-  const chartData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], // X-axis labels for each month
-    datasets: [
-      {
-        label: 'Monthly Sales ($)',
-        data: monthlySales, // Sales data for each month
-        fill: false,
-        backgroundColor: 'rgba(75,192,192,1)',
-        borderColor: 'rgba(75,192,192,1)',
-        tension: 0.1,
-      },
-    ],
-  };
+  // const chartData = {
+  //   labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], // X-axis labels for each month
+  //   datasets: [
+  //     {
+  //       label: 'Monthly Sales ($)',
+  //       data: monthlySales, // Sales data for each month
+  //       fill: false,
+  //       backgroundColor: 'rgba(75,192,192,1)',
+  //       borderColor: 'rgba(75,192,192,1)',
+  //       tension: 0.1,
+  //     },
+  //   ],
+  // };
 
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Monthly Sales Data',
-      },
-    },
-  };
+  // const chartOptions = {
+  //   responsive: true,
+  //   plugins: {
+  //     legend: {
+  //       display: true,
+  //       position: 'top',
+  //     },
+  //     title: {
+  //       display: true,
+  //       text: 'Monthly Sales Data',
+  //     },
+  //   },
+  // };
 
   return (
     <div className="bg-black text-white h-screen p-6">

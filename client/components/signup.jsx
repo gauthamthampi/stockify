@@ -42,11 +42,13 @@ const SignupComponent = () => {
     setLoading(true);
     try {
       const response = await axios.post(localhost+'/api/signup', formData);
-      console.log("Signup success");
+      console.log("Signup success",response.data);
       setLoading(false)
       router.push('/login')
     } catch (error) {
       setApiError('Signup failed. Please try again.');
+      console.error(error);
+      
     } finally {
       setLoading(false);
     }
