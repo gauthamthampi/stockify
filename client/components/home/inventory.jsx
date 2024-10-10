@@ -15,6 +15,7 @@ const Inventory = () => {
   const [editItemId, setEditItemId] = useState(null); // Store the id of the item being edited
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
 
   useEffect(() => {
@@ -108,6 +109,16 @@ const Inventory = () => {
     setItemToDelete(id);
     setDeleteModalOpen(true);
   };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value.toLowerCase());
+  };
+
+  const filteredItems = items.filter(
+    (item) =>
+      item.name.toLowerCase().includes(searchQuery) ||
+      item.description.toLowerCase().includes(searchQuery)
+  );
   
 
   const handleDeleteItem = async (id) => {
@@ -141,17 +152,17 @@ const Inventory = () => {
   return (
     <div className="bg-black text-white h-screen p-6">
       <h1 className="text-2xl font-bold mb-4">Inventory Management</h1>
-      <div className="flex justify-between items-center mt-4">
-        <button
-          onClick={() => {
-            setModalOpen(true);
-            resetForm();
-          }}
-          className="bg-blue-500 text-white rounded px-4 py-2"
-        >
-          Add New Item
-        </button>
-      </div>
+      <div className="flex items-center space-x-4">
+          {/* Search Bar */}
+          <input
+            type="text"
+            className="border border-gray-600 bg-gray-800 text-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Search by name or description"
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">Add New</button>
+        </div>
 
       {isDeleteModalOpen && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
@@ -297,38 +308,57 @@ required
 
       <div className="mt-6 overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200 bg-white dark:bg-gray-900 shadow-lg rounded-lg overflow-hidden">
-  <thead className="bg-gray-50 dark:bg-gray-800">
-    <tr>
-      <th className="px-6 py-3 text-left text-sm font-semibold tracking-wide uppercase border-b border-gray-200 dark:border-gray-700">Item Name</th>
-      <th className="px-6 py-3 text-left text-sm font-semibold tracking-wide uppercase border-b border-gray-200 dark:border-gray-700">Description</th>
-      <th className="px-6 py-3 text-left text-sm font-semibold tracking-wide uppercase border-b border-gray-200 dark:border-gray-700">Quantity</th>
-      <th className="px-6 py-3 text-left text-sm font-semibold tracking-wide uppercase border-b border-gray-200 dark:border-gray-700">Price</th>
-      <th className="px-6 py-3 text-left text-sm font-semibold tracking-wide uppercase border-b border-gray-200 dark:border-gray-700">Actions</th>
-    </tr>
-  </thead>
-  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-    {items.length > 0 ? (
-      items.map((item) => (
-        <tr key={item.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition ease-in-out">
-          <td className="px-6 py-4">{item.name}</td>
-          <td className="px-6 py-4 whitespace-normal break-words">
-            {item.description.length > 50 ? item.description.slice(0, 50) + '\n' + item.description.slice(50) : item.description}
-          </td>
-          <td className="px-6 py-4">{item.quandity}</td>
-          <td className="px-6 py-4">₹{item.price.toFixed(2)}</td>
-          <td className="px-6 py-4">
-            <button onClick={() => handleEditItem(item)} className="text-blue-500 hover:text-blue-700 mr-4">Edit</button>
-            <button onClick={() => openDeleteModal(item._id)} className="text-red-500 hover:text-red-700">Delete</button>
-          </td>
-        </tr>
-      ))
-    ) : (
-      <tr>
-        <td colSpan={5} className="px-6 py-4 text-center text-gray-500">No items available in the inventory</td>
-      </tr>
-    )}
-  </tbody>
-</table>
+          <thead className="bg-gray-50 dark:bg-gray-800">
+            <tr>
+              <th className="px-6 py-3 text-center text-sm font-semibold tracking-wide uppercase border-b border-gray-200 dark:border-gray-700">Name</th>
+              <th className="px-6 py-3 text-start text-sm font-semibold tracking-wide uppercase border-b border-gray-200 dark:border-gray-700">Description</th>
+              <th className="px-6 py-3 text-center text-sm font-semibold tracking-wide uppercase border-b border-gray-200 dark:border-gray-700">Quantity</th>
+              <th className="px-6 py-3 text-center text-sm font-semibold tracking-wide uppercase border-b border-gray-200 dark:border-gray-700">Price</th>
+              <th className="px-6 py-3 text-center text-sm font-semibold tracking-wide uppercase border-b border-gray-200 dark:border-gray-700">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            {filteredItems.length > 0 ? (
+              filteredItems.map((item) => (
+                <tr key={item._id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition ease-in-out">
+                  <td className="px-6 py-4 text-center">{item.name}</td>
+                  <td className="px-6 py-4 text-start">
+                    {item.description.length > 50 ? (
+                      <>
+                        {item.description.slice(0, 50)}<br />
+                        {item.description.slice(50)}
+                      </>
+                    ) : (
+                      item.description
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-center">{item.quandity}</td>
+                  <td className="px-6 py-4 text-center">₹{item.price.toFixed(2)}</td>
+                  <td className="px-6 py-4 text-center">
+                    <button
+                      onClick={() => handleEditItem(item)}
+                      className="text-blue-500 hover:text-blue-700 mr-4"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => openDeleteModal(item._id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                  No items available in the inventory
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
 
       </div>
     </div>

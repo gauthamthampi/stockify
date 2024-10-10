@@ -23,7 +23,6 @@ export const fetchDashboardData: any = async (req: Request, res: Response): Prom
         const userEmail = decodedToken.email;
 
         const totalCustomers = await Customer.countDocuments({ creator: userEmail });
-
         const totalInventoryItems = await Inventory.countDocuments({ creator: userEmail });
 
         const sales = await Sales.find({ owner: userEmail });
@@ -35,11 +34,35 @@ export const fetchDashboardData: any = async (req: Request, res: Response): Prom
             totalItemsSold += sale.quantity;
         });
 
+        const monthlySalesData = await Sales.aggregate([
+            {
+                $match: { owner: userEmail } // Match sales by user
+            },
+            {
+                $group: {
+                    _id: { month: { $month: "$date" }, year: { $year: "$date" } }, // Group by month and year
+                    totalSales: { $sum: "$cash" }, // Sum of sales in each month
+                    totalQuantitySold: { $sum: "$quantity" } // Sum of items sold in each month
+                }
+            },
+            {
+                $sort: { "_id.year": 1, "_id.month": 1 } // Sort by year and month
+            }
+        ]);
+
+        const monthlySales = Array(12).fill(0); // Initialize with 0 for all months
+
+        monthlySalesData.forEach(sale => {
+            const monthIndex = sale._id.month - 1; // Adjust month to be 0-based
+            monthlySales[monthIndex] = sale.totalSales;
+        });
+
         return res.status(200).json({
             totalCustomers,
             totalInventoryItems,
             totalProfit,
             totalItemsSold,
+            monthlySales, 
         });
     } catch (err: any) {
         return res.status(500).json({ message: 'An error occurred', error: err.message });

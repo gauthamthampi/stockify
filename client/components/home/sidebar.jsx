@@ -14,7 +14,6 @@ const Sidebar = ({ activeComponent }) => {
     { name: 'Inventory Management', path: '/inventory', key: 'inventory' },
     { name: 'Customers', path: '/customers', key: 'customers' },
     { name: 'Sales', path: '/sales', key: 'sales' },
-    { name: 'Reports', path: '/reports', key: 'reports' },
   ];
 
   useEffect(() => {
