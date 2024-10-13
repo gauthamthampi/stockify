@@ -37,6 +37,10 @@ const Inventory = () => {
     }
   };
 
+  const handleOpenModal = () => {
+    setModalOpen(true)
+  }
+
   const handleAddOrUpdateItem = async (e) => {
     e.preventDefault();
     setInputErrors({});
@@ -161,7 +165,7 @@ const Inventory = () => {
             value={searchQuery}
             onChange={handleSearchChange}
           />
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">Add New</button>
+          <button onClick={handleOpenModal} className="bg-blue-500 text-white px-4 py-2 rounded-lg">Add New</button>
         </div>
 
       {isDeleteModalOpen && (
